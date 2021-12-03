@@ -1,5 +1,5 @@
 """
-VIT implementation adapted from the `vit-pytorch` package.
+Initial VIT implementation adapted from the `vit-pytorch` package.
 """
 
 import torch
@@ -199,9 +199,9 @@ class HourglassViT(nn.Module):
         
         # [b, n, dim] -> [b, n, 3*p_h*p_w]
         x = self.from_patch_embedding(x)
-
+        
         # [b, n, 3 * p_h * p_w] -> [b, 3, h, w]
         x = x.reshape((-1, self.channels, self.image_height, self.image_width))
         
         return x
-        
+
