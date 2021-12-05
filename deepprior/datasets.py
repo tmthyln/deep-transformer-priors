@@ -5,16 +5,17 @@ from torch.utils.data import Dataset
 
 class SingleImageDataset(Dataset):
     
-    def __init__(self, *, transform=None, target_transform=None, std=0.1):
+    def __init__(self, filename, *, transform=None, target_transform=None, scale=0.1,
+                 std=0.1):
         self.transform = transform
         self.target_transform = target_transform
         self.std = std
         
-        self.image = plt.imread('data/grass.jpg').astype(np.float32)
-        self.rand = np.random.uniform(0., 0.1, self.image.shape).astype(np.float32)
+        self.image = plt.imread(filename).astype(np.float32)
+        self.rand = np.random.uniform(0., scale, self.image.shape).astype(np.float32)
     
     def __len__(self):
-        return 128  # even though single image, this number limits the batch size
+        return 128  # even though single image, this number limits the batch size and sets the epoch size
     
     def __getitem__(self, idx):
         random_image = self.rand + np.random.randn(*self.rand.shape).astype(np.float32) * self.std
