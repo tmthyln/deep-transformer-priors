@@ -5,6 +5,15 @@ from torch import nn
 from tqdm.auto import trange
 
 
+def get_configuration(**kwargs):
+    defaults = {
+        'batch_size': 4,
+        'num_workers': 2,
+    }
+    
+    return Namespace(**{**defaults, **kwargs})
+
+
 def train_model(model, dataloader, criterion, optimizer, device):
     model.train()
     
