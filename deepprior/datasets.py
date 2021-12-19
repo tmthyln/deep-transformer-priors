@@ -3,6 +3,17 @@ from matplotlib import pyplot as plt
 from torch.utils.data import Dataset
 
 
+def permute_image(im):
+    reshaped_indices = np.swapaxes(
+        np.indices(im.shape)
+          .reshape((3, im.shape[0] * im.shape[1], im.shape[2])), 0, 1)
+    permuted_indices = np.random.permutation(reshaped_indices)
+    indices = np.swapaxes(permuted_indices, 0, 1).reshape((3,) + im.shape)
+    x, y, z = indices
+    
+    return im[x, y, z]
+
+
 class SingleImageDataset(Dataset):
     
     def __init__(self, filename, *, transform=None, target_transform=None, scale=0.1,
