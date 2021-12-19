@@ -1,3 +1,4 @@
+import pathlib
 from argparse import Namespace
 
 import torch
@@ -9,29 +10,34 @@ def get_configuration(**kwargs):
     defaults = {
         'batch_size': 4,
         'num_workers': 2,
+        'device': torch.device('cpu'),
+        'max_epochs': 100,
+        'checkpoint_directory': pathlib.Path('.'),
+        'save_every': 1,
     }
     
     return Namespace(**{**defaults, **kwargs})
 
 
-def train_model(model, dataloader, criterion, optimizer, device):
+def train_model(model, dataloader, config):
+    config.checkpoint_directory.mkdir(parents=True, exist_ok=True)
     model.train()
     
     train_loss = []
     
-    epoch_progress = trange(100)
+    epoch_progress = trange(config.max_epochs)
     for epoch in epoch_progress:
         epoch_progress.set_description(f'Epoch {epoch}')
         running_loss = 0.
         running_count = 0
         
         for inputs, outputs in dataloader:
-            optimizer.zero_grad()
+            config.optimizer.zero_grad()
             
-            pred_outputs = model(inputs.to(device))
-            loss = criterion(outputs.to(device), pred_outputs)
+            pred_outputs = model(inputs.to(config.device))
+            loss = config.criterion(outputs.to(config.device), pred_outputs)
             loss.backward()
-            optimizer.step()
+            config.optimizer.step()
             
             running_loss += loss.item()
             running_count += inputs.size(0)
@@ -41,7 +47,7 @@ def train_model(model, dataloader, criterion, optimizer, device):
             })
         
         train_loss.append(running_loss / running_count)
-        torch.save(model.state_dict(), f'checkpoints/model_checkpoint-{epoch}.pt')
+        torch.save(model.state_dict(), config.checkpoint_directory / f'model_checkpoint-{epoch}.pt')
         
     return train_loss
 
