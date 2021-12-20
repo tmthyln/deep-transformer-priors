@@ -47,7 +47,9 @@ def train_model(model, dataloader, config):
             })
         
         train_loss.append(running_loss / running_count)
-        torch.save(model.state_dict(), config.checkpoint_directory / f'model_checkpoint-{epoch}.pt')
+        
+        if epoch % config.save_every == 0:
+            torch.save(model.state_dict(), config.checkpoint_directory / f'model_checkpoint-{epoch}.pt')
         
     return train_loss
 
