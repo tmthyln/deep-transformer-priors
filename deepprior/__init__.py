@@ -3,7 +3,7 @@ from argparse import Namespace
 
 import torch
 from torch import nn
-from tqdm.auto import trange
+from tqdm import trange
 
 
 def get_configuration(**kwargs):
